@@ -1,7 +1,7 @@
 // Find the top 5 cities with the most homicides from the years [1980,2014]
 import org.apache.spark.{SparkConf, SparkContext}
 
-object top5 {
+object top5Cities {
   def main(args: Array[String]): Unit = {
 
     val conf = new SparkConf().setAppName("top5states").setMaster("local[4]")
