@@ -1,4 +1,4 @@
-// Find the top 5 states with the most homicides from the years [1980,2014]
+// Find the top 5 cities with the most homicides from the years [1980,2014]
 import org.apache.spark.{SparkConf, SparkContext}
 
 object top5 {
