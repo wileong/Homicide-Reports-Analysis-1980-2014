@@ -4,7 +4,7 @@ import org.apache.spark.{SparkConf, SparkContext}
 object top5Cities {
   def main(args: Array[String]): Unit = {
 
-    val conf = new SparkConf().setAppName("top5states").setMaster("local[4]")
+    val conf = new SparkConf().setAppName("top5Cities").setMaster("local[4]")
     val sc = new SparkContext(conf)
 
     val pops = sc.textFile("populations.csv").map( line =>
