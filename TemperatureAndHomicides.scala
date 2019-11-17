@@ -12,7 +12,7 @@ object HotVsCold_And_YoungestPerpetrators {
 
   def main(args: Array[String]): Unit = {
 
-    //assumes a directory "C:\winutils\bin" has already been created on a windows fs
+    //assumes a directory "C:\winutils\bin" has already been created on a windows filesystem
     System.setProperty("hadoop.home.dir", "c:/winutils/")
 
     Logger.getLogger("org").setLevel(Level.OFF)
@@ -27,9 +27,9 @@ object HotVsCold_And_YoungestPerpetrators {
 
     val hotVsColdDataLines = sc.textFile("homicideReports1980To2014.csv") //put input file above src dir in an intellij project
 
-    // an array of tuples. Format: ( (Year, Month), Record ID)
+    // an array of tuples. Format for each row of data: ( (Year, Month), Record ID)
     // note: must always return a tuple so array stays an array of tuples and not an object
-    // 0 are distinct Record ID's of each homicide, 6 is year, 7 is month
+    // 0 are distinct Record ID's of each homicide, 6 is the year, 7 is the month
     val hotVsColdData = hotVsColdDataLines.map(_.split(",")).map(
       x=> if (!x(0).contentEquals("Record ID")) {
         x(7) match {
@@ -60,7 +60,7 @@ object HotVsCold_And_YoungestPerpetrators {
       case ((k1:Int, v1:Int), v2) => (k1, v1)
     }).map(
       t=> t match {
-        case ((k1, v1), v2) => ((k1, v1), v2.toList.length) //((year, month), number of homicides)
+        case ((k1, v1), v2) => ((k1, v1), v2.toList.length) //Format of each row of data: ((year, month), number of homicides)
       }
     ).collect()
 
@@ -71,7 +71,7 @@ object HotVsCold_And_YoungestPerpetrators {
 
     hotVsColdGroupedByYearAndMonth.foreach(x=> x match {
       case ( (k1, v1), v2 ) =>
-        out.write(v1 + "/" + k1 + "," + v2 + "\n") //output to csv: month/year, Number of Homicides
+        out.write(v1 + "/" + k1 + "," + v2 + "\n") //output to csv file: month/year, Number of Homicides
 
     })
 
@@ -79,8 +79,9 @@ object HotVsCold_And_YoungestPerpetrators {
 
     println("Finding Number of Homicides in Colder Vs Hotter Months ... Done.\n")
 
-    // an array of tuples. Format: ( perpetrator age , city, state,
-    // victim sex, victim age, perpetrator sex, recordId, Relationship to Victim, Weapon Used)
+    // Put data from csv file into this format for each row of data: ( perpetrator age , (city, state,
+    // victim sex, victim age, perpetrator sex, recordId, Relationship to Victim, Weapon Used) )
+    // so that perpetrator age can be sorted and filtered on.
     val youngPerpetratorData = hotVsColdDataLines.map(_.split(",")).map(
       x=> if (!x(0).contentEquals("Record ID") ) {
         try {
@@ -100,12 +101,15 @@ object HotVsCold_And_YoungestPerpetrators {
 
     val out2 = new PrintWriter(new File("YoungestPerpetrators.csv"))
 
+    // output to csv file: recordId (v6), City (v1), State (v2), 
+    // Victim Sex (v3), Victim Age (v4), Perpetrator Sex (v5),  
+    // Perpetrator Age (k), Relationship (v7), Weapon Used (v8)
     youngPerpetratorData.foreach(x=> x match {
       case (k:Int, (v1, v2, v3, v4, v5, v6, v7, v8)) =>
         out2.write(v6 + "," + v1 + ","
           + v2 + "," + v3 + "," + v4
           + "," + v5 + "," + k + "," + v7 + ","
-          + v8 + "\n") //output to csv: recordId, .... , Perpetrator Age, ...
+          + v8 + "\n") 
 
     })
 
